@@ -23,7 +23,7 @@ def q_learning_3_states(opponent_history: list[str]) -> str:
 
     LEARNING_RATE = 0.95
     # GAMMA = 0.96
-    HISTORY_STEPS = 0 # how many of the previous moves of the opponent should be used for learning? 0 means all steps
+    HISTORY_STEPS = 10 # how many of the previous moves of the opponent should be used for learning? 0 means all steps
 
     # this uses only the last HISTORY_STEPS entries of opponent_history
     # still works if HISTORY_STEPS > opponent_history.size or if HISTORY_STEPS = 0 (just uses all entries in both cases)
