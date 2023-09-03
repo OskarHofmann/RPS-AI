@@ -1,12 +1,35 @@
 import numpy as np
+import itertools
 
 # ideal response based on a predicted move of the oponnent
 POSSIBLE_MOVES = ['R', 'P', 'S']
 IDEAL_RESPONSE = {'P': 'S', 'R': 'P', 'S': 'R'}
 
+# all possible 3 move sequences 
+POSSIBLE_3_MOVES_SEQUENCES = list(itertools.product('RPS', repeat = 3))
+
+#learns from opponent history to predict a move based on the opponents previous 3 moves
+def q_learning_3_moves(opponent_history: list[str]) -> str:
+    
+    # state: oponnent's move at round n, n-1, n-2
+    # action: (prediction of) opponent's move at round n+1
+    STATES = len(POSSIBLE_3_MOVES_SEQUENCES) # 27
+    ACTIONS = 3 # R, P, S
+
+    Q = np.random.rand(STATES, ACTIONS)
+
+    LEARNING_RATE = 0.95
+    # GAMMA = 0.96
+    HISTORY_STEPS = 12 # how many of the previous moves of the opponent should be used for learning? 0 means all steps
+
+    # this uses only the last HISTORY_STEPS entries of opponent_history
+    # still works if HISTORY_STEPS > opponent_history.size or if HISTORY_STEPS = 0 (just uses all entries in both cases)
+    considered_opponent_history = opponent_history[-HISTORY_STEPS:]
+
+    pass
 
 #learns from opponent history to predict a move based on the opponents previous move
-def q_learning_3_states(opponent_history: list[str]) -> str:
+def q_learning_1_move(opponent_history: list[str]) -> str:
 
     def calc_reward(prediction: int, truth: int) -> int:
         if prediction == truth:
@@ -51,4 +74,4 @@ def player(prev_play, opponent_history=[]):
     if prev_play:
         opponent_history.append(prev_play)
 
-    return q_learning_3_states(opponent_history)
+    return q_learning_1_move(opponent_history)
