@@ -60,9 +60,11 @@ def q_learning_1_move(opponent_history: list[str]) -> str:
     for idx, move in enumerate(considered_opponent_history[:-1]):
         # get index of Q table
         state = POSSIBLE_MOVES.index(move)
+        # the correct action is the next move of the opponent that should be predicted
+        correct_action = POSSIBLE_MOVES.index(considered_opponent_history[idx+1])
         # for each possible action, update Q-table based on whether the prediction would be right or wrong
         for action in range(ACTIONS):
-            reward = calc_reward(action, POSSIBLE_MOVES.index(considered_opponent_history[idx+1]))
+            reward = calc_reward(action, correct_action)
             Q[state,action] = (1-LEARNING_RATE) * Q[state,action] + LEARNING_RATE * reward
 
     calculated_response_index = np.argmax(Q[POSSIBLE_MOVES.index(considered_opponent_history[-1]), :])
