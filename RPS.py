@@ -109,3 +109,9 @@ def player(prev_play, opponent_history=[]):
 
     # return q_learning_1_move(opponent_history)
     return q_learning_3_moves(opponent_history)
+
+#TODO:
+# 1) player uses Q_table = [Q] and only calculates based on latest move
+# 2) player calculates next move based on history of own moves, use the one with highest confidence
+# 3) add calculation of enemy move based on history of 2 player moves and use best of all 3
+
