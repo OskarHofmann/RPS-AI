@@ -105,6 +105,7 @@ def player(prev_play, opponent_history=[]):
     if prev_play:
         opponent_history.append(prev_play)
     else:
+        # reset the opponent history after an empty prev_play as it indicates playing against a new enemy
         opponent_history = []
 
     # return q_learning_1_move(opponent_history)
