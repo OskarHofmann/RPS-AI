@@ -9,7 +9,7 @@ from unittest import main
 # play(player, mrugesh, 1000)
 
 # Uncomment line below to play interactively against a bot:
-play(human, player, 20, verbose=True)
+# play(human, player, 20, verbose=True)
 
 # Uncomment line below to play against a bot that plays randomly:
 # play(human, random_player, 1000)
@@ -17,4 +17,4 @@ play(human, player, 20, verbose=True)
 
 
 # Uncomment line below to run unit tests automatically
-# main(module='test_module', exit=False)
+main(module='test_module', exit=False)
