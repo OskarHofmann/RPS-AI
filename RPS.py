@@ -81,15 +81,18 @@ def q_learning_enemy_moves(opponent_history: list[str], n_moves: int = 3, q_tabl
 # even outside the life cycle of the player function.
 # This works as default values are initialized once (at first call of the function) and lists are mutable so that when the list is changed
 # it is still the same object the initialized variable is referencing.
-def player(prev_play, opponent_history = [], q_table = []):
+def player(prev_play, opponent_history = [], player_history = [], q_table = []):
     if prev_play:
         opponent_history.append(prev_play)
     else:
         # reset the opponent history and q_table after an empty prev_play as it indicates playing against a new enemy
         opponent_history = []
+        player_history = []
         q_table = []
 
-    return q_learning_enemy_moves(opponent_history, n_moves = 3, q_table = q_table)
+    calculated_move = q_learning_enemy_moves(opponent_history, n_moves = 3, q_table = q_table)
+    player_history.append(calculated_move)
+    return calculated_move
 
 #TODO:
 # 1) add calculation of enemy move based on history of player moves
