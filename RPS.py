@@ -23,8 +23,9 @@ def initialize_q_table(n_states: int) -> np.ndarray:
 def predict_move(Q: np.ndarray, previous_steps: list[str], possible_n_moves_sequences: list[tuple]) -> str:
     last_n_moves = tuple(previous_steps)
     calculated_move_index = np.argmax(Q[possible_n_moves_sequences.index(last_n_moves), :])
+    calculated_move_prob = Q[possible_n_moves_sequences.index(last_n_moves), calculated_move_index]
     calculated_move = POSSIBLE_MOVES[calculated_move_index]
-    return calculated_move
+    return calculated_move, calculated_move_prob
 
 
 # updates q_table (inplace)
