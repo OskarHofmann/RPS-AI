@@ -4,18 +4,18 @@ import itertools
 # ideal response based on a predicted move of the oponnent
 POSSIBLE_MOVES = ['R', 'P', 'S']
 IDEAL_RESPONSE = {'P': 'S', 'R': 'P', 'S': 'R'}
+ACTIONS = 3 # R, P, S
 
 
 #learns from opponent history to predict a move based on the opponents previous n moves
 def q_learning_enemy_moves(opponent_history: list[str], n_moves: int = 3, q_table = list[np.ndarray]) -> str:
 
     # all possible n move sequences 
-    POSSIBLE_N_MOVES_SEQUENCES = list(itertools.product('RPS', repeat = n_moves))
+    possible_n_moves_sequences = list(itertools.product('RPS', repeat = n_moves))
     # state: move at round n, n-1, n-2 ... n-(steps-1)
     # action: (prediction of) move at round n+1
-    STATES = len(POSSIBLE_N_MOVES_SEQUENCES)
-    ACTIONS = 3 # R, P, S
-
+    states = len(possible_n_moves_sequences)
+ 
 
     def calc_reward(prediction: int, truth: int) -> int:
         if prediction == truth:
@@ -26,30 +26,30 @@ def q_learning_enemy_moves(opponent_history: list[str], n_moves: int = 3, q_tabl
 
     def initialize_q_table() -> np.ndarray:
         # Q = np.zeros((STATES, ACTIONS))
-        Q = np.random.rand(STATES, ACTIONS)
+        Q = np.random.rand(states, ACTIONS)
         return Q
     
 
     # updates q_table (inplace)
     def update_q_table(Q: np.ndarray, previous_steps: list[str], true_outcome: str) -> None:
-        LEARNING_RATE = 0.9
+        learning_rate = 0.9
         # GAMMA = 0.96
 
         # create tuple as itertools.product returns tuples, i.e. POSSIBLE_N_MOVES_SEQUENCES is a list of tuples
         move_sequence = tuple(previous_steps)
         # get index of Q table
-        state = POSSIBLE_N_MOVES_SEQUENCES.index(move_sequence)
+        state = possible_n_moves_sequences.index(move_sequence)
         correct_action = POSSIBLE_MOVES.index(true_outcome)
 
         # for each possible action, update Q-table based on whether the prediction would be right or wrong
         for action in range(ACTIONS):
             reward = calc_reward(action, correct_action)
-            Q[state,action] = (1-LEARNING_RATE) * Q[state,action] + LEARNING_RATE * reward
+            Q[state,action] = (1-learning_rate) * Q[state,action] + learning_rate * reward
 
     
     def predict_move(Q: np.ndarray, previous_steps: list[str]) -> str:
         last_n_moves = tuple(previous_steps)
-        calculated_move_index = np.argmax(Q[POSSIBLE_N_MOVES_SEQUENCES.index(last_n_moves), :])
+        calculated_move_index = np.argmax(Q[possible_n_moves_sequences.index(last_n_moves), :])
         calculated_move = POSSIBLE_MOVES[calculated_move_index]
         return calculated_move
 
