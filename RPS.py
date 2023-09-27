@@ -96,5 +96,5 @@ def player(prev_play, opponent_history = [], player_history = [], q_table = []):
 
 #TODO:
 # 1) add calculation of enemy move based on history of player moves
-# 2) use prediction with highes probabilty
+# 2) use prediction with highes probabilty (return probability in predict_move function)
 
