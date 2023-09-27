@@ -7,6 +7,41 @@ IDEAL_RESPONSE = {'P': 'S', 'R': 'P', 'S': 'R'}
 ACTIONS = 3 # R, P, S
 
 
+def calc_reward(prediction: int, truth: int) -> int:
+    if prediction == truth:
+        return 1
+    else:
+        return -1
+    
+
+def initialize_q_table(n_states: int) -> np.ndarray:
+    # Q = np.zeros((STATES, ACTIONS))
+    Q = np.random.rand(n_states, ACTIONS)
+    return Q
+
+
+def predict_move(Q: np.ndarray, previous_steps: list[str], possible_n_moves_sequences: list[tuple]) -> str:
+    last_n_moves = tuple(previous_steps)
+    calculated_move_index = np.argmax(Q[possible_n_moves_sequences.index(last_n_moves), :])
+    calculated_move = POSSIBLE_MOVES[calculated_move_index]
+    return calculated_move
+
+
+# updates q_table (inplace)
+def update_q_table(Q: np.ndarray, previous_steps: list[str], true_outcome: str, possible_n_moves_sequences: list[tuple], learning_rate: float = 0.9) -> None:
+
+    # create tuple as itertools.product returns tuples, i.e. POSSIBLE_N_MOVES_SEQUENCES is a list of tuples
+    move_sequence = tuple(previous_steps)
+    # get index of Q table
+    state = possible_n_moves_sequences.index(move_sequence)
+    correct_action = POSSIBLE_MOVES.index(true_outcome)
+
+    # for each possible action, update Q-table based on whether the prediction would be right or wrong
+    for action in range(ACTIONS):
+        reward = calc_reward(action, correct_action)
+        Q[state,action] = (1-learning_rate) * Q[state,action] + learning_rate * reward
+
+
 #learns from opponent history to predict a move based on the opponents previous n moves
 def q_learning_enemy_moves(opponent_history: list[str], n_moves: int = 3, q_table = list[np.ndarray]) -> str:
 
@@ -14,45 +49,7 @@ def q_learning_enemy_moves(opponent_history: list[str], n_moves: int = 3, q_tabl
     possible_n_moves_sequences = list(itertools.product('RPS', repeat = n_moves))
     # state: move at round n, n-1, n-2 ... n-(steps-1)
     # action: (prediction of) move at round n+1
-    states = len(possible_n_moves_sequences)
- 
-
-    def calc_reward(prediction: int, truth: int) -> int:
-        if prediction == truth:
-            return 1
-        else:
-            return -1
-
-
-    def initialize_q_table() -> np.ndarray:
-        # Q = np.zeros((STATES, ACTIONS))
-        Q = np.random.rand(states, ACTIONS)
-        return Q
-    
-
-    # updates q_table (inplace)
-    def update_q_table(Q: np.ndarray, previous_steps: list[str], true_outcome: str) -> None:
-        learning_rate = 0.9
-        # GAMMA = 0.96
-
-        # create tuple as itertools.product returns tuples, i.e. POSSIBLE_N_MOVES_SEQUENCES is a list of tuples
-        move_sequence = tuple(previous_steps)
-        # get index of Q table
-        state = possible_n_moves_sequences.index(move_sequence)
-        correct_action = POSSIBLE_MOVES.index(true_outcome)
-
-        # for each possible action, update Q-table based on whether the prediction would be right or wrong
-        for action in range(ACTIONS):
-            reward = calc_reward(action, correct_action)
-            Q[state,action] = (1-learning_rate) * Q[state,action] + learning_rate * reward
-
-    
-    def predict_move(Q: np.ndarray, previous_steps: list[str]) -> str:
-        last_n_moves = tuple(previous_steps)
-        calculated_move_index = np.argmax(Q[possible_n_moves_sequences.index(last_n_moves), :])
-        calculated_move = POSSIBLE_MOVES[calculated_move_index]
-        return calculated_move
-
+    n_states = len(possible_n_moves_sequences) 
         
 
     # if the oponent history contains less than n moves, then no real prediction can be made
@@ -62,17 +59,17 @@ def q_learning_enemy_moves(opponent_history: list[str], n_moves: int = 3, q_tabl
     if q_table:
         Q = q_table[0]
     else:
-        Q = initialize_q_table()
+        Q = initialize_q_table(n_states)
         q_table.append(Q)
 
     # get the last n+1 moves
     # the first n moves define the state for training, the last move is outcome that should be predicted (action)
     move_sequence_training =[opponent_history[i] for i in range(-n_moves-1 , -1)]
     correct_action = opponent_history[-1]
-    update_q_table(Q, move_sequence_training, correct_action)
+    update_q_table(Q, move_sequence_training, correct_action, possible_n_moves_sequences)
 
     last_steps = [opponent_history[i] for i in range(-n_moves , 0)]
-    calculated_move =  predict_move(Q, last_steps)
+    calculated_move =  predict_move(Q, last_steps, possible_n_moves_sequences)
 
     return IDEAL_RESPONSE[calculated_move]
 
