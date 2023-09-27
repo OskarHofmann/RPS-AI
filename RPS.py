@@ -91,18 +91,18 @@ def q_learning_own_moves(opponent_history: list[str], player_history: list[str],
         return 'P', 0
     
     if q_table:
-        Q = q_table[0]
+        Q = q_table[-1]
     else:
         Q = initialize_q_table(n_states)
         q_table.append(Q)
 
     # get the last n+1 moves
     # the first n moves define the state for training, the last move is outcome that should be predicted (action)
-    move_sequence_training =[opponent_history[i] for i in range(-n_moves-1 , -1)]
+    move_sequence_training =[player_history[i] for i in range(-n_moves-1 , -1)]
     correct_action = opponent_history[-1]
     update_q_table(Q, move_sequence_training, correct_action, possible_n_moves_sequences)
 
-    last_steps = [opponent_history[i] for i in range(-n_moves , 0)]
+    last_steps = [player_history[i] for i in range(-n_moves , 0)]
     calculated_move, calculated_move_prob =  predict_move(Q, last_steps, possible_n_moves_sequences)
 
     return IDEAL_RESPONSE[calculated_move], calculated_move_prob
@@ -112,7 +112,7 @@ def q_learning_own_moves(opponent_history: list[str], player_history: list[str],
 # even outside the life cycle of the player function.
 # This works as default values are initialized once (at first call of the function) and lists are mutable so that when the list is changed
 # it is still the same object the initialized variable is referencing.
-def player(prev_play: str, opponent_history: list[str] = [], player_history: list[str] = [], q_table: list[np.ndarray] = []):
+def player(prev_play: str, opponent_history: list[str] = [], player_history: list[str] = ['P'], q_table: list[np.ndarray] = []):
     if prev_play:
         opponent_history.append(prev_play)
     else:
@@ -121,11 +121,12 @@ def player(prev_play: str, opponent_history: list[str] = [], player_history: lis
         player_history = []
         q_table = []
 
-    calculated_move, calculated_move_prob = q_learning_enemy_moves(opponent_history, q_table = q_table, n_moves = 3)
+    # calculated_move, calculated_move_prob = q_learning_enemy_moves(opponent_history, q_table = q_table, n_moves = 3)
+    calculated_move, calculated_move_prob = q_learning_own_moves(opponent_history, player_history, q_table = q_table, n_moves = 2)
     player_history.append(calculated_move)
     return calculated_move
 
 #TODO:
-# 1) add calculation of enemy move based on history of player moves
+# 1) Find out why player_history gets resetted on second call
 # 2) use prediction with highes probabilty (return probability in predict_move function)
 
