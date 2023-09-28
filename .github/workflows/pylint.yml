@@ -21,4 +21,4 @@ jobs:
         pip install numpy
     - name: Analysing the code with pylint
       run: |
-        pylint --disable=C,W,R1705 RPS.py
+        pylint RPS.py
