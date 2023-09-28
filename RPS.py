@@ -12,7 +12,7 @@ def calc_reward(prediction: int, truth: int) -> int:
         return 1
     else:
         return -1
-    
+
 
 def initialize_q_table(n_states: int) -> np.ndarray:
     # Q = np.zeros((STATES, ACTIONS))
@@ -51,12 +51,12 @@ def q_learning_enemy_moves(opponent_history: list[str], q_table: list[np.ndarray
     # state: move at round n, n-1, n-2 ... n-(steps-1)
     # action: (prediction of) move at round n+1
     n_states = len(possible_n_moves_sequences) 
-        
+
 
     # if the oponent history contains less than n moves, then no real prediction can be made
     if len(opponent_history) < (n_moves + 1):
         return 'P', 0
-    
+
     if q_table:
         Q = q_table[0]
     else:
