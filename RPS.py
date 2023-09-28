@@ -1,6 +1,6 @@
-import numpy as np
 import itertools
 from typing import Union
+import numpy as np
 
 # ideal response based on a predicted move of the oponnent
 POSSIBLE_MOVES = ['R', 'P', 'S']
