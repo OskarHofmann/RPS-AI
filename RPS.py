@@ -1,7 +1,7 @@
 import itertools
 import numpy as np
 
-# ideal response based on a predicted move of the oponnent
+
 POSSIBLE_MOVES = ['R', 'P', 'S']
 IDEAL_RESPONSE = {'P': 'S', 'R': 'P', 'S': 'R'}
 ACTIONS = 3 # R, P, S
