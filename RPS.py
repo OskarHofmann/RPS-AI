@@ -91,7 +91,7 @@ def q_learning_own_moves(opponent_history: list[str], player_history: list[str],
         return 'P', 0
     
     if q_table:
-        Q = q_table[-1]
+        Q = q_table[0]
     else:
         Q = initialize_q_table(n_states)
         q_table.append(Q)
@@ -112,19 +112,26 @@ def q_learning_own_moves(opponent_history: list[str], player_history: list[str],
 # even outside the life cycle of the player function.
 # This works as default values are initialized once (at first call of the function) and lists are mutable so that when the list is changed
 # it is still the same object the initialized variable is referencing.
-def player(prev_play: str, opponent_history: list[str] = [], player_history: list[str] = [], q_table: list[np.ndarray] = []):
+def player(prev_play: str, opponent_history: list[str] = [], player_history: list[str] = [], q_table_enemy: list[np.ndarray] = [], q_table_own: list[np.ndarray] = []):
     if prev_play:
         opponent_history.append(prev_play)
     else:
         # reset the opponent history and q_table after an empty prev_play as it indicates playing against a new enemy
         opponent_history.clear()
         player_history.clear()
-        q_table.clear()
+        q_table_enemy.clear()
+        q_table_own.clear()
 
-    # calculated_move, calculated_move_prob = q_learning_enemy_moves(opponent_history, q_table = q_table, n_moves = 3)
-    calculated_move, calculated_move_prob = q_learning_own_moves(opponent_history, player_history, q_table = q_table, n_moves = 2)
-    player_history.append(calculated_move)
-    return calculated_move
+    calculated_move_enemy, calculated_move_prob_enemy = q_learning_enemy_moves(opponent_history, q_table = q_table_enemy, n_moves = 3)
+    calculated_move_own, calculated_move_prob_own = q_learning_own_moves(opponent_history, player_history, q_table = q_table_own, n_moves = 2)
+
+    if calculated_move_prob_enemy > calculated_move_prob_own:
+        selected_move = calculated_move_enemy
+    else:
+        selected_move = calculated_move_own
+    player_history.append(selected_move)
+
+    return selected_move
 
 #TODO:
 # 1) Find out why player_history gets resetted on second call
