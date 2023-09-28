@@ -133,7 +133,4 @@ def player(prev_play: str, opponent_history: list[str] = [], player_history: lis
 
     return selected_move
 
-#TODO:
-# 1) Find out why player_history gets resetted on second call
-# 2) use prediction with highes probabilty (return probability in predict_move function)
 
